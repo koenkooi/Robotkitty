@@ -2,7 +2,9 @@
 
 Twee browserspellen, elk volledig gebouwd uit één tekening van een kind. Bij de start kies je welke je speelt.
 
-> **In English:** two browser games, each built entirely from one child's marker drawing — every sprite is a real cut-out from a photo of the artwork, never redrawn. The games and the code comments are in Dutch.
+### ▶ [Spelen: koenkooi.github.io/Robotkitty](https://koenkooi.github.io/Robotkitty/)
+
+> **In English:** two browser games, each built entirely from one child's marker drawing — every sprite is a real cut-out from a photo of the artwork, never redrawn. [Play it here.](https://koenkooi.github.io/Robotkitty/) The games and the code comments are in Dutch.
 
 <p align="center">
   <img src="docs/kiesscherm.jpg" width="260" alt="Keuzescherm met beide tekeningen">
@@ -17,7 +19,9 @@ Twee browserspellen, elk volledig gebouwd uit één tekening van een kind. Bij d
 
 ## Aan de praat krijgen
 
-Geen server, geen build, geen dependencies. Open `index.html` en het werkt — op een laptop, en op iPhone en iPad.
+Het staat op <https://koenkooi.github.io/Robotkitty/> — dat is https en geen iframe, dus daar werkt kantelen ook.
+
+Zelf draaien kan net zo goed: geen server, geen build, geen dependencies. Open `index.html` en het werkt, op een laptop en op iPhone en iPad.
 
 ```sh
 git clone https://github.com/koenkooi/Robotkitty.git
@@ -25,7 +29,7 @@ cd Robotkitty
 open index.html          # of: python3 -m http.server 8000
 ```
 
-Wil je het op je telefoon spelen met kantelen, zet het dan op een https-adres: zie [Kantelen](#kantelen) waarom dat uitmaakt.
+Kantelen werkt alleen op een https-adres, dus lokaal over `http://` blijft dat dood; zie [Kantelen](#kantelen). Springen, pakken en slepen werken overal.
 
 ## Spelen
 
@@ -41,7 +45,7 @@ Wat laag hangt pak je met de rechter knop alleen. Wat hoog hangt haal je pas met
 
 Kantelen vraagt op iOS toestemming voor de bewegingssensor. Die vraag komt bij je eerste tik, omdat Safari hem alleen vanuit een echte aanraking toestaat.
 
-Safari geeft die sensor bovendien **alleen op een https-adres**, en **alleen als de pagina niet in een iframe zit** waarvan de insluiter `allow="gyroscope; accelerometer"` meegeeft. Over gewoon `http://` of ingesloten in een andere pagina blijft kantelen dus dood. Het titelkaartje zegt welk geval je te pakken hebt; in alle gevallen kun je met je duim slepen en werkt de rest van het spel gewoon.
+Safari geeft die sensor bovendien **alleen op een https-adres**, en **alleen als de pagina niet in een iframe zit** waarvan de insluiter `allow="gyroscope; accelerometer"` meegeeft. Over gewoon `http://` of ingesloten in een andere pagina blijft kantelen dus dood — op <https://koenkooi.github.io/Robotkitty/> is aan beide voorwaarden voldaan. Het titelkaartje zegt welk geval je te pakken hebt; in alle gevallen kun je met je duim slepen en werkt de rest van het spel gewoon.
 
 De stand waarin je het toestel houdt als de ronde begint, telt als "recht vooruit". Onderuitgezakt spelen werkt dus net zo goed als rechtop.
 

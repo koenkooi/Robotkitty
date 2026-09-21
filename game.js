@@ -771,19 +771,33 @@ function screenAngle() {
   return 0;
 }
 
-// Projecteer de kanteling op de links-rechtsas van het SCHERM.
+// Hoe veel lager de RECHTERKANT van het scherm hangt dan de linker, in graden.
 //
-// gamma meet links-rechts om de lange as van het toestel, beta voor-achter.
-// Zodra het scherm gedraaid staat wisselen die twee van rol, en bij een halve
-// slag draait het teken om. Eén projectie vangt alle vier de standen; een
-// lijstje losse gevallen had allebei de liggende standen omgekeerd.
+// beta en gamma zijn Eulerhoeken en dus niet los van elkaar te lezen: hoever je
+// het toestel naar achteren houdt lekt door in de zijwaartse hoek. Optellen met
+// een sinus en cosinus, zoals hier eerst gebeurde, klopt alleen bij kleine
+// hoeken en bij een toestel dat rechtop staat -- daarbuiten stuurt het mee met
+// hoe je het vasthoudt.
 //
-// Liggend met de thuisknop rechts meldt het scherm 90 graden. Kantel je dan de
-// rechterkant omlaag, dan gaat de bovenkant van het toestel omhoog, en dat is
-// juist een POSITIEVE beta -- vandaar dat die stand +beta teruggeeft.
+// Wat wel op zichzelf staat is de zwaartekracht. Die valt in toestelassen als
+// hieronder, onafhankelijk van alpha: alpha draait om de verticaal en verandert
+// daar niets aan. Projecteer hem op de links-rechtsas van het scherm en je hebt
+// precies waar de speler aan denkt, ongeacht of hij het toestel rechtop houdt,
+// op schoot of plat op tafel.
 function screenTilt(gamma, beta, angle) {
+  const b = beta * Math.PI / 180;
+  const g = gamma * Math.PI / 180;
   const r = angle * Math.PI / 180;
-  return gamma * Math.cos(r) + beta * Math.sin(r);
+
+  const downX = Math.cos(b) * Math.sin(g);
+  const downY = -Math.sin(b);
+
+  // De rechterkant van het scherm, uitgedrukt in toestelassen.
+  const rightX = Math.cos(r);
+  const rightY = -Math.sin(r);
+
+  const along = Math.max(-1, Math.min(1, downX * rightX + downY * rightY));
+  return Math.asin(along) * 180 / Math.PI;
 }
 
 const tilt = (() => {

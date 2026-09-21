@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright (C) 2026 Koen Kooi
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Rebuild everything in assets/ from the two drawings.
 #

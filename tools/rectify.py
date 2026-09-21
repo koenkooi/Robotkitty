@@ -3,6 +3,8 @@
 The card was hand-held, so the inked screen border is a slight parallelogram;
 every later sprite crop is expressed in this rectified space, not photo space.
 """
+# Copyright (C) 2026 Koen Kooi
+# SPDX-License-Identifier: GPL-3.0-or-later
 import sys
 
 from PIL import Image

@@ -5,6 +5,8 @@ vignette and a hand shadow bottom-left, so a global gain would crush the lower
 half. Illumination is estimated from a local MAX (paper white shows through
 everywhere between strokes) and divided out.
 """
+# Copyright (C) 2026 Koen Kooi
+# SPDX-License-Identifier: GPL-3.0-or-later
 import sys
 from PIL import Image, ImageFilter, ImageEnhance
 import numpy as np

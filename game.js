@@ -6,6 +6,9 @@
  * De layout wordt hier berekend en niet in CSS: elke tekening zegt zelf waar
  * haar banden liggen (`geom`), en het speelveld ertussen rekt mee. Zo klopt het
  * beeld op een smalle telefoon en op een brede iPad.
+ *
+ * Copyright (C) 2026 Koen Kooi
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 'use strict';
 

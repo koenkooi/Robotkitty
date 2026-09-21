@@ -102,6 +102,15 @@ Hadewychs ontwerp.jpg   de tekening van Hadewych
 
 Zet op sprites nooit een `max-width`: ze krijgen hun maat van `layout()`, en een host die de pagina in zijn eigen document hangt met `img { max-width: 100% }` laat ze anders verdwijnen zodra hun ouder geen breedte heeft.
 
-## Tekeningen
+## Licentie
 
-De tekeningen zijn van **Sigrid** en **Hadewych**. Er staat bewust geen licentie op deze repo: de code mag je overnemen als je het vraagt, maar de tekeningen en alles wat eruit geknipt is blijven van hen.
+Twee licenties, omdat het om twee soorten werk gaat.
+
+| Wat | Licentie | Bestand |
+| --- | --- | --- |
+| De code — `index.html`, `style.css`, `game.js`, `tools/` | **GPL-3.0-or-later** | [`LICENSE`](LICENSE) |
+| De tekeningen en alles wat eruit geknipt is — `Sigrids design.jpg`, `Hadewychs ontwerp.jpg`, `assets/`, `docs/` | **CC BY-SA 4.0** | [`LICENSE-ARTWORK`](LICENSE-ARTWORK) |
+
+De tekeningen zijn van **Sigrid** en **Hadewych**. Alles in `assets/` is er rechtstreeks uit gesneden en valt dus onder dezelfde licentie; de schermafdrukken in `docs/` laten dat werk zien en ook die volgen de tekeningen, niet de code.
+
+Gebruik je de tekeningen of de uitsnedes, noem dan Sigrid en Hadewych en deel je eigen versie onder dezelfde voorwaarden.

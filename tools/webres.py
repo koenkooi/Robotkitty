@@ -2,6 +2,8 @@
 
 Sentinels: WEBRES: SUCCESS (...) / WEBRES: FAILURE (...) -- <reason>
 """
+# Copyright (C) 2026 Koen Kooi
+# SPDX-License-Identifier: GPL-3.0-or-later
 import os
 import sys
 from PIL import Image

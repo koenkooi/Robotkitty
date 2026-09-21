@@ -7,6 +7,8 @@ which rebuilds the stripes exactly instead of smearing across them.
 
 Sentinels: EXTRACT-HW: SUCCESS (...) / EXTRACT-HW: FAILURE (...) -- <reason>
 """
+# Copyright (C) 2026 Koen Kooi
+# SPDX-License-Identifier: GPL-3.0-or-later
 import os
 import sys
 import traceback

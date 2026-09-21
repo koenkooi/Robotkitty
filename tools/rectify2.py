@@ -7,6 +7,8 @@ the frame's corner instead of the card's.
 
 Sentinels: RECTIFY2: SUCCESS (...) / RECTIFY2: FAILURE (...) -- <reason>
 """
+# Copyright (C) 2026 Koen Kooi
+# SPDX-License-Identifier: GPL-3.0-or-later
 import sys
 
 import numpy as np

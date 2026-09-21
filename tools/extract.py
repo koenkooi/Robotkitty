@@ -11,6 +11,8 @@ and indigo have B well above R with G near R, warm paper has B below R.
 
 Sentinels: EXTRACT: SUCCESS (...) / EXTRACT: FAILURE (...) -- <reason>
 """
+# Copyright (C) 2026 Koen Kooi
+# SPDX-License-Identifier: GPL-3.0-or-later
 import os
 import sys
 import traceback

@@ -759,11 +759,14 @@ function screenAngle() {
   if (screen.orientation && typeof screen.orientation.angle === 'number') {
     return screen.orientation.angle;
   }
-  // window.orientation telt de andere kant op: waar screen.orientation 90 zegt
-  // (liggend, thuisknop rechts) zegt window.orientation -90. Los daarvan is 0
-  // een geldige hoek, dus hier geen `||` die op nul doorvalt.
+  // Oudere iOS (voor 16.4) kent alleen window.orientation. Die telt dezelfde
+  // kant op als screen.orientation.angle -- beide zijn positief tegen de klok in
+  // (MDN voor window.orientation, de Screen Orientation-spec voor angle) -- en
+  // geeft alleen -90 waar de ander 270 zegt. Een eerdere versie draaide hem hier
+  // om, uit het hoofd, en stuurde daarmee elke liggende stand verkeerd om.
+  // Los daarvan is 0 een geldige hoek, dus geen `||` die op nul doorvalt.
   if (typeof window.orientation === 'number') {
-    return (360 - window.orientation) % 360;
+    return (360 + window.orientation) % 360;
   }
   return 0;
 }

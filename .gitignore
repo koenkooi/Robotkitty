@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# Python, van tools/
+__pycache__/
+*.py[cod]
+
+# Werkmappen van de asset-pijplijn; build-assets.sh werkt standaard in een
+# tijdelijke map, maar --work kan hier iets neerzetten.
+/work/
+/build/

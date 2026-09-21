@@ -1,0 +1,315 @@
+/* Poezenspel — de layout komt uit game.js, dat bij elke resize de maat van elke
+   sprite opschrijft. Hier staat alleen wat niet van de schermmaat afhangt. */
+
+:root {
+  --ink: #1A183C;
+  --paper: #F9F6EE;
+  --gold: #FEC800;
+  --red: #D6202F;
+  --indigo: #16144A;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--ink);
+  font-family: 'Patrick Hand', 'Bradley Hand', 'Comic Sans MS', cursive;
+  /* Een spel, geen document: geen doorveren, geen dubbeltik-zoom, geen
+     selectie of vergrootglas waar je ook drukt. */
+  overscroll-behavior: none;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.layer,
+.catPart,
+.pickup img {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  /* Elke sprite krijgt zijn maat van game.js. Hosts die de pagina in hun eigen
+     document hangen zetten vaak `img { max-width: 100% }`; bij een ouder zonder
+     breedte rekent dat uit op 0px en verdwijnt de sprite. */
+  max-width: none;
+  max-height: none;
+}
+
+.layer[hidden] { display: none; }
+
+/* Het gordijn van Sigrids tekening is opgebouwd uit de strook boven de
+   klompjes en eindigt dus op een kaarsrechte lijn; uitvagen laat het in het
+   lila oplossen zoals de getekende balken dat doen. */
+#layBackdrop.faded {
+  -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+}
+
+/* Overhellen draait om de voeten, niet om het midden van het plaatje. */
+#cat { position: absolute; left: 0; top: 0; transform-origin: 50% 100%; }
+
+#pickups, #pops {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.pickup { position: absolute; }
+/* Een klompje hangt aan een draad en slingert om het punt aan de rail; een
+   bloem staat in de aarde en wiegt om haar eigen voet. */
+.pickup.hang { transform-origin: 50% 0%; }
+.pickup.stand { transform-origin: 50% 100%; }
+.pickup .wire { position: absolute; width: 3px; background: var(--ink); left: 50%; top: 0; }
+
+/* ---- punten die opploppen ---- */
+
+.pop {
+  position: absolute;
+  font-family: 'Permanent Marker', cursive;
+  color: var(--gold);
+  text-shadow: 0 3px 0 var(--ink);
+  pointer-events: none;
+  animation: popRise 700ms ease-out forwards;
+}
+
+@keyframes popRise {
+  from { opacity: 1; transform: translateY(0) rotate(-7deg) scale(0.7); }
+  20%  { opacity: 1; transform: translateY(-10px) rotate(-7deg) scale(1.15); }
+  to   { opacity: 0; transform: translateY(-70px) rotate(-7deg) scale(1); }
+}
+
+/* ---- HUD ---- */
+
+#hud { position: absolute; inset: 0; pointer-events: none; }
+
+.tag {
+  position: absolute;
+  top: calc(12px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  padding: 5px 13px 3px;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 17px;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+#scoreTag { left: 12px; transform: rotate(-2.5deg); }
+#timeTag { right: 12px; transform: rotate(2deg); }
+#scoreIcon { width: 30px; height: 24px; object-fit: contain; }
+
+#scoreTag.bump { animation: bump 320ms ease-out; }
+@keyframes bump {
+  0% { transform: rotate(-2.5deg) scale(1); }
+  40% { transform: rotate(-2.5deg) scale(1.22); }
+  100% { transform: rotate(-2.5deg) scale(1); }
+}
+
+#timeTag.low { color: var(--red); border-color: var(--red); }
+
+/* ---- de twee knoppen uit de tekening ---- */
+
+.dome {
+  position: absolute;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dome img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+
+.dome span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  font-family: 'Permanent Marker', cursive;
+  color: #fff;
+  text-shadow: 0 2px 0 var(--indigo);
+  pointer-events: none;
+}
+
+.dome.pressed { filter: brightness(0.82); }
+
+#btnSound {
+  position: absolute;
+  right: calc(12px + env(safe-area-inset-right));
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+  z-index: 6;
+}
+
+#btnSound.off { opacity: 0.45; }
+
+/* ---- schermen ---- */
+
+.sheet {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  background: rgba(22, 20, 52, 0.55);
+  z-index: 5;
+  overflow-y: auto;
+}
+
+.sheet.hidden { display: none; }
+
+#titleSheet { background: rgba(22, 20, 52, 0.4); }
+
+.card {
+  width: min(348px, 100%);
+  padding: 20px 18px 24px;
+  background: var(--paper);
+  border: 5px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 6px 7px 0 rgba(14, 12, 40, 0.45);
+  text-align: center;
+  transform: rotate(-1.8deg);
+}
+
+.card h1 { margin: 0; display: flex; flex-direction: column; }
+
+.card h1 span {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.card .l1 { color: var(--ink); }
+.card .l2 { color: var(--red); }
+
+.card .lead { margin: 10px 0 0; font-size: 21px; color: #2C2A5C; }
+.card .hint { margin: 12px 0 0; font-size: 17px; color: #5B5890; }
+
+.card .bigScore {
+  margin: 2px 0;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 62px;
+  line-height: 1.05;
+  color: var(--red);
+}
+
+/* ---- welke tekening speel je ---- */
+
+.picker {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.pick {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 8px 12px;
+  border: 4px solid var(--ink);
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+.pick:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+
+.pick img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+}
+
+.pick b {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 17px;
+  color: var(--ink);
+}
+
+.pick i { font-style: normal; font-size: 15px; color: #2C2A5C; }
+.pick u { text-decoration: none; font-size: 14px; color: #7A77A8; }
+
+.row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+.bigBtn {
+  margin-top: 18px;
+  padding: 10px 26px 7px;
+  border: 4px solid var(--ink);
+  border-radius: 999px;
+  background: var(--gold);
+  font-family: 'Permanent Marker', cursive;
+  font-size: 24px;
+  color: var(--ink);
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: 0 4px 0 var(--ink);
+}
+
+.bigBtn.ghost { background: #fff; font-size: 17px; }
+
+.bigBtn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+
+#loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  background: var(--paper);
+  font-family: 'Permanent Marker', cursive;
+  font-size: 26px;
+  color: var(--ink);
+  z-index: 9;
+}
+
+#loading.done { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pop { animation-duration: 1ms; }
+  #scoreTag.bump { animation: none; }
+}
+
+/* Een schakel van de staartketting: even groot als het poes-canvas en op 0,0,
+   zodat een geneste schakel in hetzelfde assenstelsel blijft en de draaiingen
+   zich gewoon opstapelen. */
+.tailSeg { position: absolute; left: 0; top: 0; }

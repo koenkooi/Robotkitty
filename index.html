@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Poezenspel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="description" content="Twee spellen uit twee tekeningen: pak de goudklompjes, of pluk de bloemen.">
+<meta name="theme-color" content="#1A183C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Poezenspel">
+<link rel="icon" href="assets/nugget1.png">
+<link rel="apple-touch-icon" href="assets/nugget1.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Patrick+Hand&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="stage" aria-label="Poezenspel speelveld">
+
+  <!-- Elke laag krijgt zijn plaatje en zijn maat van game.js; welke plaatjes
+       dat zijn hangt af van welke tekening je speelt. -->
+  <img class="layer" id="layField" alt="">
+  <img class="layer" id="layGround" alt="">
+  <img class="layer" id="layBackdrop" alt="">
+  <img class="layer" id="layTop" alt="">
+  <img class="layer" id="layDivider" alt="">
+
+  <div id="pickups" aria-hidden="true"></div>
+  <div id="pops" aria-hidden="true"></div>
+  <div id="cat" aria-hidden="true"></div>
+
+  <div id="hud">
+    <p id="scoreTag" class="tag"><img id="scoreIcon" src="assets/nugget1.png" alt="Gepakt"><span id="score">0</span></p>
+    <p id="timeTag" class="tag"><span id="time">1:00</span></p>
+  </div>
+
+  <button type="button" id="btnJump" class="dome">
+    <img id="btnJumpImg" alt="">
+    <span id="btnJumpLabel">SPRING</span>
+  </button>
+
+  <button type="button" id="btnGrab" class="dome">
+    <img id="btnGrabImg" alt="">
+    <span id="btnGrabLabel">PAK</span>
+  </button>
+
+  <button type="button" id="btnSound" aria-label="Geluid aan of uit">
+    <span id="soundIcon" aria-hidden="true">&#9834;</span>
+  </button>
+
+  <div class="sheet" id="titleSheet">
+    <div class="card">
+      <h1><span class="l1">POEZEN</span><span class="l2">SPEL</span></h1>
+      <p class="lead">Welke tekening wil je spelen?</p>
+
+      <div class="picker">
+        <button type="button" class="pick" data-theme="sigrid">
+          <img src="assets/drawing.jpg" alt="">
+          <b>Robot Poes</b>
+          <i>pak de goudklompjes</i>
+          <u>van Sigrid</u>
+        </button>
+        <button type="button" class="pick" data-theme="hadewych">
+          <img src="assets/hw_drawing.jpg" alt="">
+          <b>Bloemen Poes</b>
+          <i>pluk de bloemen</i>
+          <u>van Hadewych</u>
+        </button>
+      </div>
+
+      <p class="hint" id="tiltHint" hidden></p>
+    </div>
+  </div>
+
+  <div class="sheet hidden" id="overSheet">
+    <div class="card">
+      <h1><span class="l2">TIJD OM!</span></h1>
+      <p class="lead">je pakte</p>
+      <p class="bigScore" id="finalScore">0</p>
+      <p class="lead" id="finalNoun">goudklompjes</p>
+      <p class="hint" id="recordLine">record &middot; 0</p>
+      <div class="row">
+        <button type="button" class="bigBtn" id="btnAgain">OPNIEUW</button>
+        <button type="button" class="bigBtn ghost" id="btnSwitch">ANDERE TEKENING</button>
+      </div>
+    </div>
+  </div>
+
+  <p id="loading">Laden&hellip;</p>
+
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>

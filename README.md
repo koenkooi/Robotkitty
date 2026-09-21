@@ -49,7 +49,7 @@ Kantelen vraagt op iOS toestemming voor de bewegingssensor. Die vraag komt bij j
 
 Safari geeft die sensor bovendien **alleen op een https-adres**, en **alleen als de pagina niet in een iframe zit** waarvan de insluiter `allow="gyroscope; accelerometer"` meegeeft. Over gewoon `http://` of ingesloten in een andere pagina blijft kantelen dus dood — op <https://koenkooi.github.io/Robotkitty/> is aan beide voorwaarden voldaan. Het titelkaartje zegt welk geval je te pakken hebt; in alle gevallen kun je met je duim slepen en werkt de rest van het spel gewoon.
 
-De stand waarin je het toestel houdt als de ronde begint, telt als "recht vooruit". Onderuitgezakt spelen werkt dus net zo goed als rechtop.
+De stand waarin je het toestel vasthoudt als de ronde begint, telt als "recht vooruit". Achterover hangen met een telefoon of iPad werkt dus net zo goed als rechtop zitten, in elke schermstand. Zak je later anders, dan schuift dat nulpunt langzaam mee zolang je stilhoudt; een bewuste kanteling telt gewoon mee.
 
 ## Hoe het eruitziet
 

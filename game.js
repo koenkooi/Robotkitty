@@ -18,6 +18,7 @@ const ALLOW_WALK = true;
 
 const TILT_DEAD_DEG = 4;        // speling, zodat een scheef gehouden telefoon niet dwaalt
 const TILT_FULL_DEG = 22;       // hierboven loopt de poes op volle snelheid
+const TILT_RECENTRE_S = 3;      // seconden waarin het nulpunt meekruipt als je stilhoudt
 const LEAN_DEG = 7;             // de poes helt over in de looprichting
 
 const ROUND_SECONDS = 60;
@@ -597,7 +598,7 @@ function update(dt) {
     if (kitty.grabT > GRAB_MS + GRAB_COOLDOWN_MS) kitty.grabT = -1;
   }
   if (ALLOW_WALK) {
-    const drive = walkInput();
+    const drive = walkInput(dt);
     kitty.drive = drive;
     // Hoe harder hij loopt, hoe sneller de pas.
     if (drive !== 0 && !kitty.airborne) kitty.legPhase += dt * (5 + 9 * Math.abs(drive));
@@ -804,6 +805,8 @@ const tilt = (() => {
   let active = false;
   let raw = 0;
   let neutral = 0;
+  let calibrated = false;
+  let wantCalibration = false;
   let asked = false;
   let reason = 'unsupported';
   let reading = false;
@@ -816,6 +819,14 @@ const tilt = (() => {
   function onOrient(e) {
     reading = true;
     raw = sideways(e);
+    // Een nulpunt dat gevraagd werd voordat de eerste meting binnen was hoort bij
+    // DEZE meting. `raw` begint op 0, en daar kalibreren betekent dat je alleen
+    // recht op stand nul kunt spelen: elke andere houding rent de poes weg.
+    if (wantCalibration) {
+      neutral = raw;
+      calibrated = true;
+      wantCalibration = false;
+    }
   }
 
   // iOS geeft de bewegingssensor pas na een expliciete vraag, en die vraag mag
@@ -860,14 +871,30 @@ const tilt = (() => {
     set onchange(fn) { onChange = fn; },
     get active() { return active; },
     get reason() { return reason; },
-    // De stand waarin het toestel bij de start ligt telt als recht vooruit,
-    // zodat onderuitgezakt spelen net zo goed werkt als rechtop.
-    calibrate() { neutral = raw; },
-    amount() {
-      if (!active) return 0;
+    // De stand waarin je het toestel bij de start vasthoudt telt als recht
+    // vooruit, zodat achterover hangen net zo goed werkt als rechtop zitten.
+    calibrate() {
+      if (reading) {
+        neutral = raw;
+        calibrated = true;
+        wantCalibration = false;
+      } else {
+        wantCalibration = true;     // onOrient doet het bij de eerste meting
+      }
+    },
+    amount(dt = 1 / 60) {
+      if (!active || !calibrated) return 0;
       const d = raw - neutral;
       const past = Math.abs(d) - TILT_DEAD_DEG;
-      if (past <= 0) return 0;
+      if (past <= 0) {
+        // Binnen de dode zone stuurt niemand, dus dat is het moment om het
+        // nulpunt te laten meekruipen: je zakt in je stoel, het toestel zakt
+        // mee, en de poes moet daar niet van gaan lopen. Alleen zo blijft een
+        // rustige verandering van houding onzichtbaar, en een bewuste kanteling
+        // niet. In seconden gerekend, zodat het op elke schermfrequentie hetzelfde is.
+        neutral += d * (1 - Math.exp(-dt / TILT_RECENTRE_S));
+        return 0;
+      }
       return Math.sign(d) * Math.min(1, past / (TILT_FULL_DEG - TILT_DEAD_DEG));
     },
   };
@@ -875,8 +902,8 @@ const tilt = (() => {
 
 // Kantelen stuurt; pijltjestoetsen doen het op een laptop. Slepen blijft over
 // voor een toestel dat geen sensor geeft of waar die geweigerd is.
-function walkInput() {
-  const t = tilt.amount();
+function walkInput(dt) {
+  const t = tilt.amount(dt);
   if (t !== 0) return t;
   if (keys.left && !keys.right) return -1;
   if (keys.right && !keys.left) return 1;

@@ -39,6 +39,8 @@ Kantelen werkt alleen op een https-adres, dus lokaal over `http://` blijft dat d
 | Springen | De linker knop | Spatiebalk |
 | Pakken of plukken | De rechter knop | Enter of `G` |
 
+Rechtsonder zitten twee kleine knopjes: geluid aan of uit, en volledig scherm. Bij de start gaat het spel er vanzelf in, als het toestel dat toelaat.
+
 Wat laag hangt pak je met de rechter knop alleen. Wat hoog hangt haal je pas met springen én pakken samen, en dat is 2 punten waard. Je kunt niet verliezen — een ronde duurt 60 seconden, en elke tekening houdt haar eigen record bij.
 
 ### Kantelen

@@ -155,9 +155,8 @@ html, body {
 
 .dome.pressed { filter: brightness(0.82); }
 
-#btnSound {
+#btnSound, #btnFull {
   position: absolute;
-  right: calc(12px + env(safe-area-inset-right));
   bottom: calc(10px + env(safe-area-inset-bottom));
   width: 44px;
   height: 44px;
@@ -173,7 +172,12 @@ html, body {
   z-index: 6;
 }
 
+/* De twee kleine knoppen staan naast elkaar in dezelfde hoek. */
+#btnSound { right: calc(12px + env(safe-area-inset-right)); }
+#btnFull { right: calc(64px + env(safe-area-inset-right)); }
+
 #btnSound.off { opacity: 0.45; }
+#btnFull[hidden] { display: none; }
 
 /* ---- schermen ---- */
 

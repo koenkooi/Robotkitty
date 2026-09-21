@@ -221,7 +221,8 @@ const dom = {
   btnJump: el('btnJump'), btnGrab: el('btnGrab'), btnSound: el('btnSound'),
   btnJumpImg: el('btnJumpImg'), btnGrabImg: el('btnGrabImg'),
   btnJumpLabel: el('btnJumpLabel'), btnGrabLabel: el('btnGrabLabel'),
-  soundIcon: el('soundIcon'), titleSheet: el('titleSheet'), overSheet: el('overSheet'),
+  soundIcon: el('soundIcon'), btnFull: el('btnFull'), fullIcon: el('fullIcon'),
+  titleSheet: el('titleSheet'), overSheet: el('overSheet'),
   btnAgain: el('btnAgain'), btnSwitch: el('btnSwitch'), finalScore: el('finalScore'),
   finalNoun: el('finalNoun'), recordLine: el('recordLine'), loading: el('loading'),
   tiltHint: el('tiltHint'),
@@ -752,6 +753,36 @@ function saveRecord(value) {
 
 /* ------------------------------------------------------------------ kantel */
 
+// Hoeveel graden de inhoud met de klok mee gedraaid staat ten opzichte van de
+// natuurlijke stand van het toestel: 0, 90, 180 of 270.
+function screenAngle() {
+  if (screen.orientation && typeof screen.orientation.angle === 'number') {
+    return screen.orientation.angle;
+  }
+  // window.orientation telt de andere kant op: waar screen.orientation 90 zegt
+  // (liggend, thuisknop rechts) zegt window.orientation -90. Los daarvan is 0
+  // een geldige hoek, dus hier geen `||` die op nul doorvalt.
+  if (typeof window.orientation === 'number') {
+    return (360 - window.orientation) % 360;
+  }
+  return 0;
+}
+
+// Projecteer de kanteling op de links-rechtsas van het SCHERM.
+//
+// gamma meet links-rechts om de lange as van het toestel, beta voor-achter.
+// Zodra het scherm gedraaid staat wisselen die twee van rol, en bij een halve
+// slag draait het teken om. Eén projectie vangt alle vier de standen; een
+// lijstje losse gevallen had allebei de liggende standen omgekeerd.
+//
+// Liggend met de thuisknop rechts meldt het scherm 90 graden. Kantel je dan de
+// rechterkant omlaag, dan gaat de bovenkant van het toestel omhoog, en dat is
+// juist een POSITIEVE beta -- vandaar dat die stand +beta teruggeeft.
+function screenTilt(gamma, beta, angle) {
+  const r = angle * Math.PI / 180;
+  return gamma * Math.cos(r) + beta * Math.sin(r);
+}
+
 const tilt = (() => {
   let active = false;
   let raw = 0;
@@ -761,17 +792,8 @@ const tilt = (() => {
   let reading = false;
   let onChange = null;
 
-  // Welke as links-rechts is, hangt van de stand van het scherm af: rechtop is
-  // dat gamma, gedraaid is het beta, en op z'n kop draaien de tekens om.
   function sideways(e) {
-    const angle = (screen.orientation && screen.orientation.angle)
-      || window.orientation || 0;
-    const g = e.gamma || 0;
-    const b = e.beta || 0;
-    if (angle === 90) return -b;
-    if (angle === 270 || angle === -90) return b;
-    if (angle === 180) return -g;
-    return g;
+    return screenTilt(e.gamma || 0, e.beta || 0, screenAngle());
   }
 
   function onOrient(e) {
@@ -893,6 +915,51 @@ const sound = (() => {
   };
 })();
 
+/* ------------------------------------------------------- volledig scherm */
+
+// Safari noemt dit nog steeds met een webkit-voorvoegsel, en op de iPhone
+// bestaat het alleen voor video -- vandaar dat de knop zichzelf verbergt als
+// het toestel het niet kan, in plaats van een dode knop te laten staan.
+const fullscreen = (() => {
+  const root = document.documentElement;
+  const can = !!(root.requestFullscreen || root.webkitRequestFullscreen);
+
+  function active() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+
+  function enter() {
+    if (!can || active()) return;
+    // Mag alleen vanuit een echte aanraking, en een weigering is geen fout die
+    // het spel mag ophouden.
+    const req = root.requestFullscreen || root.webkitRequestFullscreen;
+    try {
+      const r = req.call(root);
+      if (r && r.catch) r.catch(() => {});
+    } catch (_) { /* toestel wil niet; het spel loopt gewoon door */ }
+  }
+
+  function leave() {
+    if (!active()) return;
+    const ex = document.exitFullscreen || document.webkitExitFullscreen;
+    try {
+      const r = ex.call(document);
+      if (r && r.catch) r.catch(() => {});
+    } catch (_) { /* idem */ }
+  }
+
+  function sync() {
+    const on = active();
+    dom.fullIcon.textContent = on ? '\u2716' : '\u26F6';
+    dom.btnFull.setAttribute('aria-label',
+      on ? 'Volledig scherm verlaten' : 'Volledig scherm');
+    // De maat van het venster verandert mee, dus alles opnieuw uitmeten.
+    layout();
+  }
+
+  return { can, active, enter, leave, sync, toggle: () => (active() ? leave() : enter()) };
+})();
+
 /* ------------------------------------------------------------------- input */
 
 function hold(btn, action) {
@@ -914,6 +981,14 @@ hold(dom.btnGrab, grab);
 
 dom.btnSound.addEventListener('click', () => sound.toggle());
 
+if (fullscreen.can) {
+  dom.btnFull.hidden = false;
+  dom.btnFull.addEventListener('click', () => fullscreen.toggle());
+  for (const ev of ['fullscreenchange', 'webkitfullscreenchange']) {
+    document.addEventListener(ev, () => fullscreen.sync());
+  }
+}
+
 function showTiltReason(why) {
   dom.tiltHint.textContent = TILT_MESSAGE[why] || TILT_MESSAGE.unsupported;
   dom.tiltHint.hidden = false;
@@ -921,6 +996,8 @@ function showTiltReason(why) {
 
 async function begin(theme) {
   sound.unlock();
+  // Meteen bij de tik, want daarna is de aanraking op en weigert Safari het.
+  fullscreen.enter();
   if (theme && theme !== T) {
     applyTheme(theme);
     layout();

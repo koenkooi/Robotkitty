@@ -754,20 +754,32 @@ function saveRecord(value) {
 
 /* ------------------------------------------------------------------ kantel */
 
-// Hoeveel graden de inhoud met de klok mee gedraaid staat ten opzichte van de
-// natuurlijke stand van het toestel: 0, 90, 180 of 270.
+// Hoeveel graden het toestel gedraaid is ten opzichte van het KADER VAN DE
+// SENSOR: 0 rechtop, 90 liggend met de thuisknop rechts, 180 op de kop, 270 liggend
+// met de thuisknop links. Alleen dat getal past bij alpha/beta/gamma, want die zijn
+// aan het toestel vastgezet en draaien niet mee met het scherm.
+//
+// screen.orientation.angle is daar NIET voor te gebruiken. WebKit rekent hem uit
+// ten opzichte van de "natuurlijke" stand, en die is voor een iPhone staand maar
+// voor een iPad LIGGEND (naturalScreenOrientationType() in ScreenOrientationType.h).
+// Op een iPad is hij daardoor 90 - graden: staand meldt hij 90, liggend met de
+// thuisknop rechts 0, en hij loopt de andere kant op. Wie hem vertrouwt stuurt op
+// een iPad over de as voor-achter in plaats van links-rechts. Dat gebeurde hier,
+// nadat een eerdere versie hem trouwde omdat 0 "een geldige hoek" was.
+//
+// window.orientation kent die omweg niet: WebKit leidt hem rechtstreeks af van de
+// interfacestand (deviceOrientationForUIInterfaceOrientation in WKWebViewIOS.mm,
+// zonder iPad-uitzondering) en hij is 0 staand, 90 met de thuisknop rechts en -90
+// met de thuisknop links, op elke iOS-toestel. Hij is verouderd maar bestaat op iOS
+// nog, en op Android geeft hij hetzelfde als angle. Daarom gaat hij voor.
 function screenAngle() {
-  if (screen.orientation && typeof screen.orientation.angle === 'number') {
-    return screen.orientation.angle;
-  }
-  // Oudere iOS (voor 16.4) kent alleen window.orientation. Die telt dezelfde
-  // kant op als screen.orientation.angle -- beide zijn positief tegen de klok in
-  // (MDN voor window.orientation, de Screen Orientation-spec voor angle) -- en
-  // geeft alleen -90 waar de ander 270 zegt. Een eerdere versie draaide hem hier
-  // om, uit het hoofd, en stuurde daarmee elke liggende stand verkeerd om.
-  // Los daarvan is 0 een geldige hoek, dus geen `||` die op nul doorvalt.
   if (typeof window.orientation === 'number') {
     return (360 + window.orientation) % 360;
+  }
+  // Firefox en desktop kennen window.orientation niet. Daar is angle het enige, en
+  // op Android is hij ook relatief aan het kader van de sensor.
+  if (screen.orientation && typeof screen.orientation.angle === 'number') {
+    return screen.orientation.angle;
   }
   return 0;
 }
